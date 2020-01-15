@@ -1,0 +1,15 @@
+# Binaries for programs and plugins
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+.DS_Store
+
+# Go
+server/vendor/
+server/Gopkg.lock
+server/server
+
+# node
+client/node_modules

@@ -1,0 +1,86 @@
+admin:
+    access_log_path: /dev/stdout
+    address:
+      socket_address:
+        address: 0.0.0.0
+        port_value: 8001
+static_resources:
+    listeners:
+      name: client:8080
+      address:
+        socket_address:
+          address: 0.0.0.0
+          port_value: 8080
+      filter_chains:
+      - filter_chain_match: {}
+        transport_socket:
+          name: envoy.transport_sockets.tls
+          typed_config:
+            "@type": type.googleapis.com/envoy.api.v2.auth.DownstreamTlsContext
+            common_tls_context:
+              alpn_protocols: ["h2,http/1.1"]
+              tls_params: {}
+              tls_certificates:
+              - certificate_chain:
+                  filename: /certs/localhost.crt
+                private_key:
+                  filename: /certs/localhost.key
+        filters:
+        - name: envoy.http_connection_manager
+          typed_config:
+            "@type": type.googleapis.com/envoy.config.filter.network.http_connection_manager.v2.HttpConnectionManager
+            stat_prefix: client
+            codec_type: auto
+            route_config:
+              name: client
+              virtual_hosts:
+              - name: '*-7081'
+                domains:
+                - '*'
+                routes:
+                - match:
+                    prefix: "/"
+                  route:
+                    prefix_rewrite: "/"
+                    cluster: client
+                    timeout: 0s
+                require_tls: ALL
+                request_headers_to_add:
+                - header:
+                    key: x-my-custom-header
+                    value: "1234576"
+            http_filters:
+            - name: envoy.cors
+              typed_config: {}
+            - name: envoy.router
+              typed_config: {}
+            access_log:
+            - name: envoy.file_access_log
+              typed_config:
+                '@type': type.googleapis.com/envoy.config.accesslog.v2.FileAccessLog
+                path: /dev/stdout
+   
+    clusters:      
+    - name: client
+      connect_timeout: 3.00s
+      type: LOGICAL_DNS
+      lb_policy: round_robin
+      http2_protocol_options: {}
+      load_assignment:
+        cluster_name: client
+        endpoints:
+        - lb_endpoints:
+          - endpoint:
+              address:
+                socket_address:
+                  address: client
+                  port_value: 8081
+      transport_socket:
+        name: envoy.transport_sockets.tls
+        typed_config:
+          "@type": type.googleapis.com/envoy.api.v2.auth.UpstreamTlsContext
+          common_tls_context:
+            alpn_protocols: ["h2,http/1.1"]
+            tls_certificates:
+              - certificate_chain: { filename: "/certs/localhost.crt" }
+                private_key: { filename: "/certs/localhost.key" }
