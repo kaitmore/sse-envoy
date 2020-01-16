@@ -1,0 +1,157 @@
+admin:
+    access_log_path: /dev/stdout
+    address:
+      socket_address:
+        address: 0.0.0.0
+        port_value: 8001
+
+static_resources:
+    listeners:
+      name: edge:8080
+      address:
+        socket_address:
+          address: 0.0.0.0
+          port_value: 8080
+      filter_chains:
+      - filter_chain_match: {}
+        transport_socket:
+          name: envoy.transport_sockets.tls
+          typed_config:
+            "@type": type.googleapis.com/envoy.api.v2.auth.DownstreamTlsContext
+            common_tls_context:
+              alpn_protocols: ["h2,http/1.1"]
+              tls_params: {}
+              tls_certificates:
+              - certificate_chain:
+                  filename: /certs/localhost.crt
+                private_key:
+                  filename: /certs/localhost.key
+        filters:
+        - name: envoy.http_connection_manager
+          typed_config:
+            "@type": type.googleapis.com/envoy.config.filter.network.http_connection_manager.v2.HttpConnectionManager
+            stat_prefix: edge
+            codec_type: auto
+            route_config:
+              name: edge
+              virtual_hosts:
+              - name: '*-7080'
+                domains:
+                - '*'
+                routes:
+                - match:
+                    prefix: "/server-1/"
+                  route:
+                    prefix_rewrite: "/"
+                    cluster: server-1
+                    timeout: 0s
+                - match:
+                    prefix: "/server-1"
+                  route:
+                    prefix_rewrite: "/server-1/"
+                    cluster: server-1
+                    timeout: 0s
+                - match:
+                    prefix: "/server-2/"
+                  route:
+                    prefix_rewrite: "/"
+                    cluster: server-2
+                    timeout: 0s
+                - match:
+                    prefix: "/server-2"
+                  route:
+                    prefix_rewrite: "/server-2/"
+                    cluster: server-2
+                    timeout: 0s
+                - match:
+                   prefix: "/"
+                  route:
+                    prefix_rewrite: "/"
+                    cluster: client
+                    timeout: 0s
+                require_tls: ALL
+              request_headers_to_add:
+              - header:
+                  key: x-my-custom-header
+                  value: "1234576"
+            http_filters:
+            - name: envoy.cors
+              typed_config: {}
+            - name: envoy.router
+              typed_config: {}
+            access_log:
+            - name: envoy.file_access_log
+              typed_config:
+                '@type': type.googleapis.com/envoy.config.accesslog.v2.FileAccessLog
+                path: /dev/stdout
+   
+    clusters:     
+    - name: client
+      connect_timeout: 3.00s
+      type: LOGICAL_DNS
+      lb_policy: round_robin
+      http2_protocol_options: {}
+      load_assignment:
+        cluster_name: client
+        endpoints:
+        - lb_endpoints:
+          - endpoint:
+              address:
+                socket_address:
+                  address: client
+                  port_value: 8081
+      transport_socket:
+        name: envoy.transport_sockets.tls
+        typed_config:
+          "@type": type.googleapis.com/envoy.api.v2.auth.UpstreamTlsContext
+          common_tls_context:
+            alpn_protocols: ["h2,http/1.1"]
+            tls_certificates:
+              - certificate_chain: { filename: "/certs/localhost.crt" }
+                private_key: { filename: "/certs/localhost.key" }
+    - name: server-1
+      connect_timeout: 3.00s
+      type: LOGICAL_DNS
+      lb_policy: round_robin
+      http2_protocol_options: {}
+      load_assignment:
+        cluster_name: server-1
+        endpoints:
+        - lb_endpoints:
+          - endpoint:
+              address:
+                socket_address:
+                  address: server-1
+                  port_value: 7081
+      transport_socket:
+        name: envoy.transport_sockets.tls
+        typed_config:
+          "@type": type.googleapis.com/envoy.api.v2.auth.UpstreamTlsContext
+          common_tls_context:
+            alpn_protocols: ["h2,http/1.1"]
+            tls_certificates:
+              - certificate_chain: { filename: "/certs/localhost.crt" }
+                private_key: { filename: "/certs/localhost.key" }
+    - name: server-2
+      connect_timeout: 3.00s
+      type: LOGICAL_DNS
+      lb_policy: round_robin
+      http2_protocol_options: {}
+      load_assignment:
+        cluster_name: server-2
+        endpoints:
+        - lb_endpoints:
+          - endpoint:
+              address:
+                socket_address:
+                  address: server-2
+                  port_value: 6081
+      transport_socket:
+        name: envoy.transport_sockets.tls
+        typed_config:
+          "@type": type.googleapis.com/envoy.api.v2.auth.UpstreamTlsContext
+          common_tls_context:
+            alpn_protocols: ["h2,http/1.1"]
+            tls_certificates:
+              - certificate_chain: { filename: "/certs/localhost.crt" }
+                private_key: { filename: "/certs/localhost.key" }

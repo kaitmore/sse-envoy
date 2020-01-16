@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
+	"os"
 	"strconv"
 	"time"
 
@@ -11,6 +12,9 @@ import (
 )
 
 func main() {
+	port := ":" + os.Getenv("PORT")
+	eventType := os.Getenv("EVENT_TYPE")
+
 	opt := &sse.Options{
 		Headers: map[string]string{
 			"Access-Control-Allow-Origin":      "https://localhost:8080",
@@ -30,13 +34,13 @@ func main() {
 	go func() {
 		for {
 			joke := getDadJoke()
-			s.SendMessage("/events", sse.NewMessage(strconv.Itoa(id), joke, "dadJoke"))
+			s.SendMessage("/events", sse.NewMessage(strconv.Itoa(id), joke, eventType))
 			id++
 			time.Sleep(10 * time.Second)
 		}
 	}()
 
-	http.ListenAndServeTLS(":7081", "./certs/localhost.crt", "./certs/localhost.key", nil)
+	http.ListenAndServeTLS(port, "./certs/localhost.crt", "./certs/localhost.key", nil)
 }
 
 func getDadJoke() string {

@@ -6,32 +6,57 @@
     <title>Server Sent Events demo</title>
     <meta name="description" content="Server Sent Events demo" />
     <meta name="author" content="Kaitlin Moreno" />
+  <style type="text/css">
+  .event {
+    margin: 24px 0;
+  }
+  p {
+    margin: 0;
+  }
+  </style>
   </head>
 
   <body>
     <script>
-      const source = new EventSource(`https://localhost:7080/events`, {
+      const opts = {
         withCredentials: true
-      });
+      }
+      const source1 = new EventSource(`https://localhost:8080/server-1/events`, opts);
 
-      source.addEventListener("dadJoke", function(event) {
-        const node = document.createElement("p");
-        const textnode = document.createTextNode(event.data);
-        node.appendChild(textnode);
-        document.querySelector("#events").appendChild(node);
-      });
+      const source2 = new EventSource(`https://localhost:8080/server-2/events`, opts);
 
-      source.addEventListener("close", function(e) {
+      source1.addEventListener("server1", renderEvent);
+
+      source2.addEventListener("server2", renderEvent);
+
+      source1.addEventListener("close", function(e) {
         console.log(e);
       });
 
-      source.addEventListener("error", function(e) {
+      source1.addEventListener("error", function(e) {
         console.log(e);
       });
+
+      function renderEvent(event){
+        const wrapper = document.createElement("div");
+        wrapper.className = "event"   
+        const id = document.createTextNode(`id: ${event.lastEventId}`);
+        const idNode = document.createElement("p")
+        idNode.append(id);
+        const type = document.createTextNode(`event type: ${event.type}`);
+        const typeNode = document.createElement("p")
+        typeNode.append(type);
+        const data = document.createTextNode(`data: ${event.data}`);
+        const dataNode = document.createElement("p")
+        dataNode.append(data);
+
+        wrapper.append(idNode, typeNode, dataNode);
+        document.querySelector("#events").appendChild(wrapper);
+      }
     </script>
   </body>
   <div>
     <h1>Server Sent Events demo</h1>
-    <div id="events"></div>
+      <div id="events"></div>
   </div>
 </html>

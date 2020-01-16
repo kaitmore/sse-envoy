@@ -1,30 +1,32 @@
 version: "2"
 
 services:
-  server:
-    image: kaitmore/sse-server:latest
-    ports:
-      - "7081:7081"
-      
-  server-proxy:
-    image: envoyproxy/envoy
-    ports:
-      - "7080:7080"
-      - "7001:7001"
-    volumes:
-      - ./server/envoy.yaml:/etc/envoy/envoy.yaml  
-      - ./certs:/certs
-  
-  client: 
-    image: kaitmore/sse-client:latest
-    ports: 
-      - "8081:8081"
-
-  client-proxy:
+  edge:
     image: envoyproxy/envoy
     ports:
       - "8080:8080"
       - "8001:8001"
     volumes:
-      - ./client/envoy.yaml:/etc/envoy/envoy.yaml
+      - ./envoy.yaml:/etc/envoy/envoy.yaml  
       - ./certs:/certs
+
+  server-1:
+    image: kaitmore/sse-server:latest
+    ports:
+      - "7081:7081"
+    environment:
+      - PORT=7081
+      - EVENT_TYPE=server1
+
+  server-2:
+    image: kaitmore/sse-server:latest
+    ports:
+      - "6081:6081"
+    environment:
+      - PORT=6081
+      - EVENT_TYPE=server2
+
+  client: 
+    image: kaitmore/sse-client:latest
+    ports: 
+      - "8081:8081"
