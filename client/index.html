@@ -1,35 +1,37 @@
-<!doctype html>
+<!DOCTYPE html>
 
 <html lang="en">
-<head>
-  <meta charset="utf-8">
-  <title>Server Sent Events demo</title>
-  <meta name="description" content="Server Sent Events demo">
-  <meta name="author" content="Kaitlin Moreno">
-</head>
+  <head>
+    <meta charset="utf-8" />
+    <title>Server Sent Events demo</title>
+    <meta name="description" content="Server Sent Events demo" />
+    <meta name="author" content="Kaitlin Moreno" />
+  </head>
 
-<body>
-  <script>
-  const source = new EventSource(`https://localhost:7080/events`);
+  <body>
+    <script>
+      const source = new EventSource(`https://localhost:7080/events`, {
+        withCredentials: true
+      });
 
-  source.addEventListener("message", function(event) {
-    const node=document.createElement("p");    
-    const textnode = document.createTextNode(event.data);  
-    node.appendChild(textnode);  
-    document.querySelector("#events").appendChild(node)
-  });
+      source.addEventListener("dadJoke", function(event) {
+        const node = document.createElement("p");
+        const textnode = document.createTextNode(event.data);
+        node.appendChild(textnode);
+        document.querySelector("#events").appendChild(node);
+      });
 
-  source.addEventListener("close", function(e) {
-   console.log(e);
-  });
-  
-  source.addEventListener("error", function(e) {
-   console.log(e);
-  });
-</script>
-</body>
-<div>
-  <h1>Server Sent Events demo</h1>
-  <div id="events"></div>
-</div>
+      source.addEventListener("close", function(e) {
+        console.log(e);
+      });
+
+      source.addEventListener("error", function(e) {
+        console.log(e);
+      });
+    </script>
+  </body>
+  <div>
+    <h1>Server Sent Events demo</h1>
+    <div id="events"></div>
+  </div>
 </html>
