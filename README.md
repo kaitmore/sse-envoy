@@ -1,6 +1,6 @@
 # Server Sent Events + Envoy Demo
 
-This repo demonstrates a client and server communicating using server sent events through Envoy proxies.
+This repo demonstrates a client and server communicating using server sent events through an Envoy gateway proxy.
 
 To start:
 
@@ -12,7 +12,4 @@ docker-compose up -d
 
 View the demo at <https://localhost:8080>
 
-Envoy admin endpoints are also exposed:
-
-Client - <http://localhost:8001>
-Server - <http://localhost:7001>
+The Envoy admin endpoint is also exposed at <http://localhost:8001>
