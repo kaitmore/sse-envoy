@@ -19,14 +19,13 @@ The Envoy admin endpoint is also exposed at <http://localhost:8001>
 You can update the following environment variables in `docker-compose.yaml`
 
 ### Server
-
-| variable   | description                                                                                                         |
-|------------|---------------------------------------------------------------------------------------------------------------------|
-| PORT       | Port where server listens for connections                                                                           |
-| EVENT_TYPE | String to be used as the event type for SSE messages. Clients would add an event listener that matched this string. |
-| CERT_PATH  | String path to where cert file lives                                                                                |
-| KEY_PATH   | String path to where key file lives                                                                                 |
-
+| variable      | description                                                                                                                                  |
+|---------------|----------------------------------------------------------------------------------------------------------------------------------------------|
+| PORT          | Port where server listens for connections                                                                                                    |
+| EVENT_TYPE    | String to be used as the event type for SSE messages. Clients would add an event listener that matches this string.                          |
+| CERT_PATH     | String path to where cert file lives                                                                                                         |
+| KEY_PATH      | String path to where key file lives                                                                                                          |
+| DATA_ENDPOINT | Endpoint to a data source that will be used as events and pushed out every 10s to connected clients. Defaults to https://icanhazdadjoke.com/ |
 
 ### Client
 

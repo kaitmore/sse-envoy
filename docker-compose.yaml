@@ -18,6 +18,7 @@ services:
       - ./certs:/certs
     environment:
       - PORT=7081
+      - DATA_ENDPOINT=https://icanhazdadjoke.com/
       - EVENT_TYPE=server1
       - CERT_PATH=/certs/localhost.crt
       - KEY_PATH=/certs/localhost.key
@@ -30,6 +31,7 @@ services:
       - ./certs:/certs
     environment:
       - PORT=6081
+      - DATA_ENDPOINT=https://icanhazdadjoke.com/
       - EVENT_TYPE=server2
       - CERT_PATH=/certs/localhost.crt
       - KEY_PATH=/certs/localhost.key

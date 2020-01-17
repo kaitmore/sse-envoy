@@ -14,6 +14,7 @@ import (
 func main() {
 	port := ":" + os.Getenv("PORT")
 	eventType := os.Getenv("EVENT_TYPE")
+	dataEndpoint := os.Getenv("DATA_ENDPOINT")
 	certPath := os.Getenv("CERT_PATH")
 	keyPath := os.Getenv("KEY_PATH")
 
@@ -36,7 +37,7 @@ func main() {
 	id := 1
 	go func() {
 		for {
-			joke := getDadJoke()
+			joke := getDadJoke(dataEndpoint)
 			s.SendMessage("/events", sse.NewMessage(strconv.Itoa(id), joke, eventType))
 			id++
 			time.Sleep(10 * time.Second)
@@ -46,10 +47,8 @@ func main() {
 	http.ListenAndServeTLS(port, certPath, keyPath, nil)
 }
 
-func getDadJoke() string {
+func getDadJoke(url string) string {
 	client := &http.Client{}
-
-	url := "https://icanhazdadjoke.com"
 	req, err := http.NewRequest("GET", url, nil)
 
 	req.Header.Add("Accept", "text/plain")
