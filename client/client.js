@@ -8,8 +8,8 @@ const app = express();
 const PORT = process.env.PORT || 8081;
 
 const sslConfig = {
-  cert: fs.readFileSync("./certs/localhost.crt"),
-  key: fs.readFileSync("./certs/localhost.key")
+  cert: fs.readFileSync(process.env.CERT_PATH),
+  key: fs.readFileSync(process.env.KEY_PATH)
 };
 
 app.use(

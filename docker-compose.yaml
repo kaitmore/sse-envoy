@@ -14,19 +14,33 @@ services:
     image: kaitmore/sse-server:latest
     ports:
       - "7081:7081"
+    volumes:
+      - ./certs:/certs
     environment:
       - PORT=7081
       - EVENT_TYPE=server1
+      - CERT_PATH=/certs/localhost.crt
+      - KEY_PATH=/certs/localhost.key
 
   server-2:
     image: kaitmore/sse-server:latest
     ports:
       - "6081:6081"
+    volumes:
+      - ./certs:/certs
     environment:
       - PORT=6081
       - EVENT_TYPE=server2
+      - CERT_PATH=/certs/localhost.crt
+      - KEY_PATH=/certs/localhost.key
 
   client: 
     image: kaitmore/sse-client:latest
     ports: 
       - "8081:8081"
+    volumes:
+      - ./certs:/certs
+    environment:
+      - PORT=8081
+      - CERT_PATH=/certs/localhost.crt
+      - KEY_PATH=/certs/localhost.key

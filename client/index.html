@@ -21,9 +21,10 @@
       const opts = {
         withCredentials: true
       }
-      const source1 = new EventSource(`https://localhost:8080/server-1/events`, opts);
 
-      const source2 = new EventSource(`https://localhost:8080/server-2/events`, opts);
+      const source1 = new EventSource("/server-1/events", opts);
+
+      const source2 = new EventSource("/server-2/events", opts);
 
       source1.addEventListener("server1", renderEvent);
 
@@ -40,17 +41,13 @@
       function renderEvent(event){
         const wrapper = document.createElement("div");
         wrapper.className = "event"   
-        const id = document.createTextNode(`id: ${event.lastEventId}`);
-        const idNode = document.createElement("p")
-        idNode.append(id);
         const type = document.createTextNode(`event type: ${event.type}`);
         const typeNode = document.createElement("p")
         typeNode.append(type);
         const data = document.createTextNode(`data: ${event.data}`);
         const dataNode = document.createElement("p")
         dataNode.append(data);
-
-        wrapper.append(idNode, typeNode, dataNode);
+        wrapper.append(typeNode, dataNode);
         document.querySelector("#events").appendChild(wrapper);
       }
     </script>
