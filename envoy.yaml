@@ -15,18 +15,18 @@ static_resources:
           port_value: 8080
       filter_chains:
       - filter_chain_match: {}
-        transport_socket:
-          name: envoy.transport_sockets.tls
-          typed_config:
-            "@type": type.googleapis.com/envoy.api.v2.auth.DownstreamTlsContext
-            common_tls_context:
-              alpn_protocols: ["h2,http/1.1"]
-              tls_params: {}
-              tls_certificates:
-              - certificate_chain:
-                  filename: /certs/localhost.crt
-                private_key:
-                  filename: /certs/localhost.key
+        # transport_socket:
+        #   name: envoy.transport_sockets.tls
+        #   typed_config:
+        #     "@type": type.googleapis.com/envoy.api.v2.auth.DownstreamTlsContext
+        #     common_tls_context:
+        #       alpn_protocols: ["h2,http/1.1"]
+        #       tls_params: {}
+        #       tls_certificates:
+        #       - certificate_chain:
+        #           filename: /certs/localhost.crt
+        #         private_key:
+        #           filename: /certs/localhost.key
         filters:
         - name: envoy.http_connection_manager
           typed_config:
@@ -70,12 +70,25 @@ static_resources:
                     prefix_rewrite: "/"
                     cluster: client
                     timeout: 0s
-                require_tls: ALL
               request_headers_to_add:
               - header:
                   key: x-my-custom-header
                   value: "1234576"
             http_filters:
+            - name: envoy.ext_authz
+              typed_config:
+                "@type": type.googleapis.com/envoy.config.filter.http.ext_authz.v2.ExtAuthz
+                failure_mode_allow: false
+                http_service:
+                  server_uri:
+                    uri: authz:9090
+                    cluster: authz
+                    timeout: 3.25s
+                  authorizationRequest: 
+                    allowedHeaders:
+                      patterns:
+                        - exact: cookie
+                        - exact: authorization
             - name: envoy.cors
               typed_config: {}
             - name: envoy.router
@@ -86,12 +99,24 @@ static_resources:
                 '@type': type.googleapis.com/envoy.config.accesslog.v2.FileAccessLog
                 path: /dev/stdout
    
-    clusters:     
+    clusters:
+    - name: authz
+      connect_timeout: 3.00s
+      type: LOGICAL_DNS
+      lb_policy: round_robin
+      load_assignment:
+        cluster_name: authz
+        endpoints:
+        - lb_endpoints:
+          - endpoint:
+              address:
+                socket_address:
+                  address: authz
+                  port_value: 9090 
     - name: client
       connect_timeout: 3.00s
       type: LOGICAL_DNS
       lb_policy: round_robin
-      http2_protocol_options: {}
       load_assignment:
         cluster_name: client
         endpoints:
@@ -101,20 +126,19 @@ static_resources:
                 socket_address:
                   address: client
                   port_value: 8081
-      transport_socket:
-        name: envoy.transport_sockets.tls
-        typed_config:
-          "@type": type.googleapis.com/envoy.api.v2.auth.UpstreamTlsContext
-          common_tls_context:
-            alpn_protocols: ["h2,http/1.1"]
-            tls_certificates:
-              - certificate_chain: { filename: "/certs/localhost.crt" }
-                private_key: { filename: "/certs/localhost.key" }
+      # transport_socket:
+      #   name: envoy.transport_sockets.tls
+      #   typed_config:
+      #     "@type": type.googleapis.com/envoy.api.v2.auth.UpstreamTlsContext
+      #     common_tls_context:
+      #       alpn_protocols: ["h2,http/1.1"]
+      #       tls_certificates:
+      #         - certificate_chain: { filename: "/certs/localhost.crt" }
+      #           private_key: { filename: "/certs/localhost.key" }
     - name: server-1
       connect_timeout: 3.00s
       type: LOGICAL_DNS
       lb_policy: round_robin
-      http2_protocol_options: {}
       load_assignment:
         cluster_name: server-1
         endpoints:
@@ -124,20 +148,20 @@ static_resources:
                 socket_address:
                   address: server-1
                   port_value: 7081
-      transport_socket:
-        name: envoy.transport_sockets.tls
-        typed_config:
-          "@type": type.googleapis.com/envoy.api.v2.auth.UpstreamTlsContext
-          common_tls_context:
-            alpn_protocols: ["h2,http/1.1"]
-            tls_certificates:
-              - certificate_chain: { filename: "/certs/localhost.crt" }
-                private_key: { filename: "/certs/localhost.key" }
+      # transport_socket:
+      #   name: envoy.transport_sockets.tls
+      #   typed_config:
+      #     "@type": type.googleapis.com/envoy.api.v2.auth.UpstreamTlsContext
+      #     common_tls_context:
+      #       alpn_protocols: ["h2,http/1.1"]
+      #       tls_certificates:
+      #         - certificate_chain: { filename: "/certs/localhost.crt" }
+      #           private_key: { filename: "/certs/localhost.key" }
     - name: server-2
       connect_timeout: 3.00s
       type: LOGICAL_DNS
       lb_policy: round_robin
-      http2_protocol_options: {}
+      # http2_protocol_options: {}
       load_assignment:
         cluster_name: server-2
         endpoints:
@@ -147,12 +171,12 @@ static_resources:
                 socket_address:
                   address: server-2
                   port_value: 6081
-      transport_socket:
-        name: envoy.transport_sockets.tls
-        typed_config:
-          "@type": type.googleapis.com/envoy.api.v2.auth.UpstreamTlsContext
-          common_tls_context:
-            alpn_protocols: ["h2,http/1.1"]
-            tls_certificates:
-              - certificate_chain: { filename: "/certs/localhost.crt" }
-                private_key: { filename: "/certs/localhost.key" }
+      # transport_socket:
+      #   name: envoy.transport_sockets.tls
+      #   typed_config:
+      #     "@type": type.googleapis.com/envoy.api.v2.auth.UpstreamTlsContext
+      #     common_tls_context:
+      #       alpn_protocols: ["h2,http/1.1"]
+      #       tls_certificates:
+      #         - certificate_chain: { filename: "/certs/localhost.crt" }
+      #           private_key: { filename: "/certs/localhost.key" }

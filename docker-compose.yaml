@@ -46,3 +46,12 @@ services:
       - PORT=8081
       - CERT_PATH=/certs/localhost.crt
       - KEY_PATH=/certs/localhost.key
+
+
+  authz:
+    build:
+      context: ./auth
+    expose:
+      - "9090"
+    ports:
+      - "9090:9090"

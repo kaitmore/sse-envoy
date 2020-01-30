@@ -15,8 +15,6 @@ func main() {
 	port := ":" + os.Getenv("PORT")
 	eventType := os.Getenv("EVENT_TYPE")
 	dataEndpoint := os.Getenv("DATA_ENDPOINT")
-	certPath := os.Getenv("CERT_PATH")
-	keyPath := os.Getenv("KEY_PATH")
 
 	opt := &sse.Options{
 		Headers: map[string]string{
@@ -44,7 +42,7 @@ func main() {
 		}
 	}()
 
-	http.ListenAndServeTLS(port, certPath, keyPath, nil)
+	http.ListenAndServe(port, nil)
 }
 
 func getDadJoke(url string) string {

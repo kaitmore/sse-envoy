@@ -22,7 +22,7 @@ app.get("*", (req, res) => {
   res.sendFile(path.resolve("index.html"));
 });
 
-spdy.createServer(sslConfig, app).listen(PORT, error => {
+app.listen(PORT, error => {
   if (error) {
     console.error(error);
     return process.exit(1);
