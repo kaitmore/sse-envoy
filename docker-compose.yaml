@@ -63,7 +63,7 @@ services:
   keycloak:
     image: jboss/keycloak
     volumes:
-      - "./setup.sh:/opt/jboss/setup-client"
+      - "./auth/setup-keycloak.sh:/opt/jboss/setup-keycloak.sh"
     ports:
       - "7777:8080"
     environment:
