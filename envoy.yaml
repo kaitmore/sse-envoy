@@ -63,7 +63,7 @@ static_resources:
                   route:
                     prefix_rewrite: "/server-2/"
                     cluster: server-2
-                    timeout: 0s
+                    timeout: 0s 
                 - match:
                    prefix: "/"
                   route:
@@ -72,8 +72,8 @@ static_resources:
                     timeout: 0s
               request_headers_to_add:
               - header:
-                  key: x-my-custom-header
-                  value: "1234576"
+                  key: x-forwarded-proto
+                  value: "%PROTOCOL%"
             http_filters:
             - name: envoy.ext_authz
               typed_config:

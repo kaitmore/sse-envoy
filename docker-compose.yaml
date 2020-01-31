@@ -55,3 +55,18 @@ services:
       - "9090"
     ports:
       - "9090:9090"
+    volumes:
+      - "./auth/keycloak.json:/usr/src/app/keycloak.json"
+    environment: 
+      - CLIENT_SECRET=44d0f666-f4d2-4dd6-a266-924d21977a24
+
+  keycloak:
+    image: jboss/keycloak
+    volumes:
+      - "./setup.sh:/opt/jboss/setup-client"
+    ports:
+      - "7777:8080"
+    environment:
+      - KEYCLOAK_USER=user
+      - KEYCLOAK_PASSWORD=password
+      - DB_VENDOR=H2

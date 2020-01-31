@@ -1,0 +1,8 @@
+{
+  "realm": "master",
+  "auth-server-url": "http://development.com:7777/auth",
+  "ssl-required": "external",
+  "resource": "myclient",
+  "public-client": true,
+  "confidential-port": 0
+}
