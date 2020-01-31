@@ -70,10 +70,6 @@ static_resources:
                     prefix_rewrite: "/"
                     cluster: client
                     timeout: 0s
-              request_headers_to_add:
-              - header:
-                  key: x-forwarded-proto
-                  value: "%PROTOCOL%"
             http_filters:
             - name: envoy.ext_authz
               typed_config:

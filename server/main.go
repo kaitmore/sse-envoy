@@ -18,7 +18,7 @@ func main() {
 
 	opt := &sse.Options{
 		Headers: map[string]string{
-			"Access-Control-Allow-Origin":      "https://localhost:8080",
+			"Access-Control-Allow-Origin":      "*",
 			"Access-Control-Allow-Credentials": "true",
 			"Access-Control-Allow-Methods":     "GET, OPTIONS",
 			"Access-Control-Allow-Headers":     "Keep-Alive,X-Requested-With,Cache-Control,Content-Type,Last-Event-ID",
