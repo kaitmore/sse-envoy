@@ -5,8 +5,8 @@ This repo demonstrates a client and server communicating using server sent event
 To start:
 
 ```bash
-git clone https://github.com/kaitmore/simple-sse
-cd simple-sse
+git clone https://github.com/kaitmore/sse-envoy
+cd sse-envoy
 docker-compose up -d
 ```
 
