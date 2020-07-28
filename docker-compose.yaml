@@ -2,7 +2,7 @@ version: "2"
 
 services:
   edge:
-    image: envoyproxy/envoy
+    image: envoyproxy/envoy:v1.14-latest
     ports:
       - "8080:8080"
       - "8001:8001"
