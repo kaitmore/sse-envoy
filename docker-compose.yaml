@@ -2,7 +2,7 @@ version: "2"
 
 services:
   edge:
-    image: envoyproxy/envoy
+    image: envoyproxy/envoy:v1.13-latest
     ports:
       - "8080:8080"
       - "8001:8001"
@@ -58,10 +58,10 @@ services:
     volumes:
       - "./auth/keycloak.json:/usr/src/app/keycloak.json"
     environment: 
-      - CLIENT_SECRET=44d0f666-f4d2-4dd6-a266-924d21977a24
+      - CLIENT_SECRET=19cd1ab7-343b-46fc-b620-895cb21f4b79
 
   keycloak:
-    image: jboss/keycloak
+    image: jboss/keycloak:8.0.1
     volumes:
       - "./auth/setup-keycloak.sh:/opt/jboss/setup-keycloak.sh"
     ports:

@@ -15,18 +15,18 @@ static_resources:
           port_value: 8080
       filter_chains:
       - filter_chain_match: {}
-        # transport_socket:
-        #   name: envoy.transport_sockets.tls
-        #   typed_config:
-        #     "@type": type.googleapis.com/envoy.api.v2.auth.DownstreamTlsContext
-        #     common_tls_context:
-        #       alpn_protocols: ["h2,http/1.1"]
-        #       tls_params: {}
-        #       tls_certificates:
-        #       - certificate_chain:
-        #           filename: /certs/localhost.crt
-        #         private_key:
-        #           filename: /certs/localhost.key
+      # transport_socket:
+      #   name: envoy.transport_sockets.tls
+      #   typed_config:
+      #     "@type": type.googleapis.com/envoy.api.v2.auth.DownstreamTlsContext
+      #     common_tls_context:
+      #       alpn_protocols: ["h2,http/1.1"]
+      #       tls_params: {}
+      #       tls_certificates:
+      #       - certificate_chain:
+      #           filename: /certs/localhost.crt
+      #         private_key:
+      #           filename: /certs/localhost.key
         filters:
         - name: envoy.http_connection_manager
           typed_config:
